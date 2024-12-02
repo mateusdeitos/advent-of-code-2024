@@ -10,7 +10,7 @@ import (
 func TestDayOnePartOneHandler(t *testing.T) {
 
 	t.Run("test real input", func(t *testing.T) {
-		input := embed.FileInput
+		input := embed.FileInputDayOne
 
 		totalDistance, err := DayOnePartOneHandle(input)
 		assert.NoError(t, err)
@@ -73,7 +73,7 @@ func TestDayOnePartOneHandler(t *testing.T) {
 func TestDayOnePartTwoHandler(t *testing.T) {
 
 	t.Run("test real input", func(t *testing.T) {
-		input := embed.FileInput
+		input := embed.FileInputDayOne
 
 		score, err := DayOnePartTwoHandle(input)
 		assert.NoError(t, err)

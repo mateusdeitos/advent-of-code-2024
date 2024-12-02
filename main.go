@@ -11,7 +11,7 @@ import (
 func main() {
 	day := os.Args[1]
 	part := os.Args[2]
-	file := embed.FileInput
+	file := embed.FileInputDayOne
 
 	if day == "1" {
 		if part == "1" {
