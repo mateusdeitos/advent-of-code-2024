@@ -7,49 +7,116 @@ import (
 	"strings"
 )
 
-type BinarySearchTree struct {
-	value *int
-	left  *BinarySearchTree
-	right *BinarySearchTree
+type Node struct {
+	value  int
+	parent *Node
+	left   *Node
+	right  *Node
 }
 
+func newNode(value int) *Node {
+	return &Node{value, nil, nil, nil}
+}
+
+func (n *Node) Insert(node *Node) {
+	if node.value < n.value {
+		if n.left == nil {
+			n.left = node
+			node.parent = n
+		} else {
+			n.left.Insert(node)
+		}
+	} else {
+		if n.right == nil {
+			n.right = node
+			node.parent = n
+		} else {
+			n.right.Insert(node)
+		}
+	}
+}
+
+func (n *Node) String(level int) string {
+	str := fmt.Sprintf("%d:", n.value)
+	if n.left != nil {
+		tab := strings.Repeat("\t", level+1)
+		str = fmt.Sprintf("%s\n%sL:%s", str, tab, n.left.String(level+1))
+	}
+
+	if n.right != nil {
+		tab := strings.Repeat("\t", level+1)
+		str = fmt.Sprintf("%s\n%sR:%s", str, tab, n.right.String(level+1))
+	}
+
+	return str
+}
+
+type BinarySearchTree struct {
+	node     *Node
+	smallest *Node
+}
+
+// Insert inserts values smaller than the current node at left and bigger or equal at right
+// while keeping track of the reference for the smallest value in the tree
 func (b *BinarySearchTree) Insert(value int) {
-	if b.value == nil {
-		b.value = &value
+	if b.node == nil {
+		b.node = newNode(value)
+		b.smallest = b.node
 		return
 	}
 
-	if value < *b.value {
-		if b.left == nil {
-			b.left = &BinarySearchTree{value: &value}
-		} else {
-			b.left.Insert(value)
-		}
-	} else {
-		if b.right == nil {
-			b.right = &BinarySearchTree{value: &value}
-		} else {
-			b.right.Insert(value)
-		}
+	node := newNode(value)
+	b.node.Insert(node)
+
+	if value < b.smallest.value {
+		b.smallest = node
 	}
 }
 
-func (b *BinarySearchTree) GetSortedList() []int {
-	list := []int{}
+// Pop returns the current smallest value and removes it
+func (b *BinarySearchTree) Pop() *Node {
+	smallest := b.smallest
 
-	if b.left != nil {
-		list = append(list, b.left.GetSortedList()...)
+	// since the smallest is always the leftmost node we only need to
+	// swap with the right node or the parent node
+
+	if b.smallest.right != nil {
+		parent := b.smallest.parent
+		n := b.smallest.right
+
+		// link the parent of the previous smallest to the rightmost node
+		n.parent = parent
+
+		// try to find the leftmost node of the current node
+		for {
+			if n.left == nil {
+				break
+			}
+
+			// if some node on the left was found, the parent is the current node
+			parent = n
+			n = n.left
+		}
+
+		b.smallest = n
+
+		// this is needed when the smallest is the rightmost node, so we need to link the parent of the
+		// previous smallest to the current smallest node
+		if parent != nil {
+			parent.left = b.smallest
+		}
+
+		// if we don't have a right node, we can assume that the parent is the new smallest node
+	} else if b.smallest.parent != nil {
+		b.smallest = b.smallest.parent
+		b.smallest.left = nil
 	}
 
-	if b.value != nil {
-		list = append(list, *b.value)
-	}
+	return smallest
+}
 
-	if b.right != nil {
-		list = append(list, b.right.GetSortedList()...)
-	}
-
-	return list
+func (b *BinarySearchTree) String() string {
+	return b.node.String(0)
 }
 
 // DayOneHandlePartOneHandle calculates the total distance between the values of
@@ -58,6 +125,7 @@ func DayOnePartOneHandle(file []byte) (int, error) {
 	lTree := &BinarySearchTree{}
 	rTree := &BinarySearchTree{}
 	lines := strings.Split(string(file), "\n")
+	count := 0
 	for i, line := range lines {
 		n, err := parseLineAndExtractNumbers(i, line)
 		if err != nil {
@@ -73,13 +141,20 @@ func DayOnePartOneHandle(file []byte) (int, error) {
 
 		lTree.Insert(l)
 		rTree.Insert(r)
+		count++
 	}
 
-	lList := lTree.GetSortedList()
-	rList := rTree.GetSortedList()
 	totalDistance := 0
-	for i := 0; i < len(lList); i++ {
-		totalDistance += calcDistance(lList[i], rList[i])
+	for i := 0; i < count; i++ {
+		l := lTree.Pop()
+		r := rTree.Pop()
+
+		if l == nil || r == nil {
+			break
+		}
+
+		d := calcDistance(l.value, r.value)
+		totalDistance += d
 	}
 
 	return totalDistance, nil

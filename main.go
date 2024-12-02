@@ -1,19 +1,17 @@
 package main
 
 import (
-	_ "embed"
 	"fmt"
 	"os"
 
+	"github.com/mateusdeitos/advent-of-code-2024/embed"
 	"github.com/mateusdeitos/advent-of-code-2024/handlers/dayone"
 )
-
-//go:embed 1-day/input.txt
-var file []byte
 
 func main() {
 	day := os.Args[1]
 	part := os.Args[2]
+	file := embed.FileInput
 
 	if day == "1" {
 		if part == "1" {

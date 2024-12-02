@@ -3,28 +3,41 @@ package dayone
 import (
 	"testing"
 
+	"github.com/mateusdeitos/advent-of-code-2024/embed"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDayOnePartOneHandler(t *testing.T) {
 
+	t.Run("test real input", func(t *testing.T) {
+		input := embed.FileInput
+
+		totalDistance, err := DayOnePartOneHandle(input)
+		assert.NoError(t, err)
+
+		assert.Equal(t, 1151792, totalDistance)
+	})
+
 	t.Run("should return total distance", func(t *testing.T) {
 		input := []byte(`
-			1,2
-			3,4
-			5,6	
+			59569,19816
+			85735,35587
+			30874,14008
+			15369,52468
+			25998,79528
+			37079,53944
 		`)
 
 		totalDistance, err := DayOnePartOneHandle(input)
 		assert.NoError(t, err)
 
-		assert.Equal(t, 3, totalDistance)
+		assert.Equal(t, 39477, totalDistance)
 	})
 
 	t.Run("should return total distance = 0", func(t *testing.T) {
 		input := []byte(`
-			1,1
 			3,3
+			1,1
 			5,5	
 		`)
 
