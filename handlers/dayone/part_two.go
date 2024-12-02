@@ -9,7 +9,7 @@ import (
 // It compares how many times a number appears on the right list and multiply by its value
 // e.g: if 3 appears 2 times in the right list, the similarity score will be 6
 func DayOnePartTwoHandle(file []byte) (int, error) {
-	score := map[int][2]int{}
+	score := map[int]*[2]int{}
 	total := 0
 
 	lines := strings.Split(string(file), "\n")
@@ -29,42 +29,30 @@ func DayOnePartTwoHandle(file []byte) (int, error) {
 		// if the left list value is not in the score map
 		// add to it with count = 1
 		if _, ok := score[l]; !ok {
-			score[l] = [2]int{1, 0}
+			score[l] = &[2]int{1, 0}
 		} else {
-			// otherwise:
-			// 1 - calculate the previous similarity score
-			// 2 - increase the count
-			// 3 - subtract the previous score from total
-			// 4 - add the new score to the total
-			s := score[l]
-			prevScore := calcSimilarity(s)
-			s[0]++
-			score[l] = s
-			total -= prevScore
-			total += calcSimilarity(s)
+			total = incrementTotal(total, 1, l, 0, score)
 		}
 
-		// if the right list value is in the score map
-		// 1 - calculate the previous similarity score
-		// 2 - add the right list value to the value
-		// 3 - subtract the previous score from total
-		// 4 - add the new score to the total
-		if s, ok := score[r]; ok {
-			prevScore := calcSimilarity(s)
-			s[1] += r
-			score[r] = s
-			total -= prevScore
-			total += calcSimilarity(s)
+		if _, ok := score[r]; ok {
+			total = incrementTotal(total, r, r, 1, score)
 		} else {
-			// otherwise:
 			// add the right list value to the score map with 0 count
-			score[r] = [2]int{0, r}
+			score[r] = &[2]int{0, r}
 		}
 	}
 
 	return total, nil
 }
 
-func calcSimilarity(set [2]int) int {
+func incrementTotal(total, increment, key, index int, score map[int]*[2]int) int {
+	prev := calcSimilarity(score[key])
+	score[key][index] += increment
+	total -= prev
+	total += calcSimilarity(score[key])
+	return total
+}
+
+func calcSimilarity(set *[2]int) int {
 	return set[0] * set[1]
 }

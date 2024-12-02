@@ -59,20 +59,12 @@ func TestDayOnePartOneHandler(t *testing.T) {
 
 func TestDayOnePartTwoHandler(t *testing.T) {
 
-	t.Run("should calculate the similarity score correctly", func(t *testing.T) {
-		input := []byte(`
-			3,4
-			4,3
-			2,5
-			1,3
-			3,9
-			3,3
-		`)
+	t.Run("test real input", func(t *testing.T) {
+		input := embed.FileInput
 
-		expected := 31
 		score, err := DayOnePartTwoHandle(input)
-
 		assert.NoError(t, err)
-		assert.Equal(t, expected, score)
+
+		assert.Equal(t, 21790168, score)
 	})
 }
