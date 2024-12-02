@@ -6,6 +6,7 @@ import (
 
 	"github.com/mateusdeitos/advent-of-code-2024/embed"
 	"github.com/mateusdeitos/advent-of-code-2024/handlers/dayone"
+	"github.com/mateusdeitos/advent-of-code-2024/handlers/daytwo"
 )
 
 func main() {
@@ -31,6 +32,19 @@ func main() {
 			}
 
 			fmt.Printf("Similarity Score: %d\n", score)
+			return
+		}
+	}
+
+	if day == "2" {
+		file = embed.FileInputDayTwo
+		if part == "1" {
+			count, err := daytwo.DayTwoPartOneHandle(file)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Printf("Amount of safe reports: %d\n", count)
 			return
 		}
 	}
