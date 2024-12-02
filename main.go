@@ -47,6 +47,16 @@ func main() {
 			fmt.Printf("Amount of safe reports: %d\n", count)
 			return
 		}
+
+		if part == "2" {
+			count, err := daytwo.DayTwoPartTwoHandle(file)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Printf("Amount of safe reports: %d\n", count)
+			return
+		}
 	}
 
 	fmt.Printf("Day %s part %s not implemented\n", day, part)

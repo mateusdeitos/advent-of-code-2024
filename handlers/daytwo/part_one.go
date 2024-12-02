@@ -13,8 +13,8 @@ const (
 )
 
 const (
-	DIRECTION_INCREASING = iota
-	DIRECTION_DECREASING
+	DIRECTION_INCREASING = "increasing"
+	DIRECTION_DECREASING = "decreasing"
 )
 
 func DayTwoPartOneHandle(file []byte) (int, error) {
@@ -60,13 +60,15 @@ func analyseLine(index int, line string) (bool, error) {
 		}
 
 		if i > 0 {
-			safe := isSafe(*prev, level)
+			safe := isDifferenceSafe(*prev, level)
 			if !safe {
+				fmt.Printf("Line %d is unsafe: %s (diff issue)\n", index, parsedLine)
 				return false, nil
 			}
 
 			currentDir := getDirection(*prev, level)
 			if currentDir != dir {
+				fmt.Printf("Line %d is unsafe: %s (direction issue)\n", index, parsedLine)
 				return false, nil
 			}
 		}
@@ -77,12 +79,12 @@ func analyseLine(index int, line string) (bool, error) {
 	return true, nil
 }
 
-func isSafe(a, b int) bool {
+func isDifferenceSafe(a, b int) bool {
 	diff := int(math.Abs(float64(a - b)))
 	return diff >= LOWER_THRESHOLD_LEVEL_SAFETY && diff <= UPPER_THRESHOLD_LEVEL_SAFETY
 }
 
-func getDirection(a, b int) int {
+func getDirection(a, b int) string {
 	if a < b {
 		return DIRECTION_INCREASING
 	}
