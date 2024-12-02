@@ -3,6 +3,7 @@ package daytwo
 import (
 	"testing"
 
+	"github.com/mateusdeitos/advent-of-code-2024/embed"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,5 +22,13 @@ func TestDayTwoPartOneHandler(t *testing.T) {
 		count, err := DayTwoPartOneHandle(input)
 		assert.NoError(t, err)
 		assert.Equal(t, 2, count)
+	})
+
+	t.Run("test real input", func(t *testing.T) {
+		input := embed.FileInputDayTwo
+
+		count, err := DayTwoPartOneHandle(input)
+		assert.NoError(t, err)
+		assert.Equal(t, 631, count)
 	})
 }
