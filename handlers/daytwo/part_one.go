@@ -13,8 +13,8 @@ const (
 )
 
 const (
-	DIRECTION_INCREASING = "increasing"
-	DIRECTION_DECREASING = "decreasing"
+	DIRECTION_INCREASING = 1
+	DIRECTION_DECREASING = -1
 )
 
 func DayTwoPartOneHandle(file []byte) (int, error) {
@@ -47,36 +47,41 @@ func analyseLine(index int, line string) (bool, error) {
 
 	parsedLine := strings.Split(string(line), " ")
 
-	var prev *int
-	dir := DIRECTION_INCREASING
-	for i, strLevel := range parsedLine {
-		level, err := strconv.Atoi(strLevel)
+	prev, err := strconv.Atoi(parsedLine[0])
+	if err != nil {
+		return false, fmt.Errorf("Error parsing line %d: %v", index, err)
+	}
+
+	var dir int
+	for i := 1; i < len(parsedLine); i++ {
+		level, err := strconv.Atoi(parsedLine[i])
 		if err != nil {
 			return false, fmt.Errorf("Error parsing line %d: %v", index, err)
 		}
 
+		diff := level - prev
+		if abs(diff) < LOWER_THRESHOLD_LEVEL_SAFETY || abs(diff) > UPPER_THRESHOLD_LEVEL_SAFETY {
+			return false, nil
+		}
+
 		if i == 1 {
-			dir = getDirection(*prev, level)
+			dir = diff / abs(diff)
+		} else if (diff > 0 && dir < 0) || (diff < 0 && dir > 0) {
+			return false, nil
 		}
 
-		if i > 0 {
-			safe := isDifferenceSafe(*prev, level)
-			if !safe {
-				fmt.Printf("Line %d is unsafe: %s (diff issue)\n", index, parsedLine)
-				return false, nil
-			}
-
-			currentDir := getDirection(*prev, level)
-			if currentDir != dir {
-				fmt.Printf("Line %d is unsafe: %s (direction issue)\n", index, parsedLine)
-				return false, nil
-			}
-		}
-
-		prev = &level
+		prev = level
 	}
 
 	return true, nil
+}
+
+func abs(a int) int {
+	if a < 0 {
+		return -a
+	}
+
+	return a
 }
 
 func isDifferenceSafe(a, b int) bool {
@@ -84,7 +89,7 @@ func isDifferenceSafe(a, b int) bool {
 	return diff >= LOWER_THRESHOLD_LEVEL_SAFETY && diff <= UPPER_THRESHOLD_LEVEL_SAFETY
 }
 
-func getDirection(a, b int) string {
+func getDirection(a, b int) int {
 	if a < b {
 		return DIRECTION_INCREASING
 	}

@@ -26,53 +26,75 @@ func DayTwoPartTwoHandle(file []byte) (int, error) {
 }
 
 func analyseLineWithTolerance(index int, line string) (bool, error) {
+	levels, err := parseLevels(line)
+	if err != nil {
+		return false, fmt.Errorf("Error parsing line %d: %v", index, err)
+	}
+
+	if levels == nil {
+		return false, nil
+	}
+
+	if isSafe(levels) {
+		return true, nil
+	}
+
+	for i := 0; i < len(levels); i++ {
+		levelsWithTolerance := createCombinationIgnoringLevel(levels, i)
+		if isSafe(levelsWithTolerance) {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func isSafe(levels []int) bool {
+	prev := levels[0]
+	dir := getDirection(prev, levels[1])
+	for i := 1; i < len(levels); i++ {
+		level := levels[i]
+
+		diff := level - prev
+		safe := abs(diff) >= LOWER_THRESHOLD_LEVEL_SAFETY && abs(diff) <= UPPER_THRESHOLD_LEVEL_SAFETY
+		if !safe {
+			return false
+		}
+
+		currentDir := getDirection(prev, level)
+		if currentDir != dir {
+			return false
+		}
+
+		prev = level
+	}
+
+	return true
+}
+
+func parseLevels(line string) ([]int, error) {
 	line = strings.TrimFunc(line, func(r rune) bool {
 		return r == '\r' || r == '\n' || r == ' ' || r == '\t'
 	})
 
 	if line == "" {
-		return false, nil
+		return nil, nil
 	}
 
 	parsedLine := strings.Split(string(line), " ")
 
-	badLevelsCombination := [][]int{}
 	levels := make([]int, len(parsedLine))
 
 	for i, strLevel := range parsedLine {
 		level, err := strconv.Atoi(strLevel)
 		if err != nil {
-			return false, fmt.Errorf("Error parsing line %d: %v", index, err)
+			return nil, fmt.Errorf("Error parsing line %s: %v", line, err)
 		}
 
 		levels[i] = level
 	}
 
-	fmt.Printf("Analyzing line %d: %v\t", index, levels)
-	analyseLevels(levels, func(index int) {
-		badLevelsCombination = append(badLevelsCombination, createCombinationIgnoringLevel(levels, index))
-	})
-
-	if len(badLevelsCombination) == 0 {
-		fmt.Printf("RESULT: safe\n")
-		return true, nil
-	}
-
-	for _, combination := range badLevelsCombination {
-		safe := true
-		analyseLevels(combination, func(index int) {
-			safe = false
-		})
-
-		if safe {
-			fmt.Printf("RESULT: safe with tolerance\n")
-			return true, nil
-		}
-	}
-
-	fmt.Printf("RESULT: unsafe\n")
-
-	return false, nil
+	return levels, nil
 }
 
 func analyseLevels(levels []int, onUnsafe func(index int)) {
@@ -81,7 +103,8 @@ func analyseLevels(levels []int, onUnsafe func(index int)) {
 	for i := 1; i < len(levels); i++ {
 		level := levels[i]
 
-		safe := isDifferenceSafe(prev, level)
+		diff := level - prev
+		safe := abs(diff) >= LOWER_THRESHOLD_LEVEL_SAFETY && abs(diff) <= UPPER_THRESHOLD_LEVEL_SAFETY
 		if !safe {
 			onUnsafe(i)
 			onUnsafe(i - 1)
