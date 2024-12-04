@@ -54,7 +54,14 @@ func main() {
 
 	fmt.Printf("Downloading input for day %s\n", day)
 	r, _ := http.NewRequest("GET", "https://adventofcode.com/2024/day/"+day+"/input", nil)
-	r.AddCookie(&http.Cookie{Name: "session", Value: os.Getenv("SESSION")})
+
+	session := os.Getenv("SESSION")
+	if session == "" {
+		fmt.Printf("Error: SESSION environment variable not set\n")
+		os.Exit(1)
+	}
+
+	r.AddCookie(&http.Cookie{Name: "session", Value: session})
 
 	res, err := http.DefaultClient.Do(r)
 	if err != nil {
@@ -64,14 +71,14 @@ func main() {
 
 	defer res.Body.Close()
 
-	if res.StatusCode != http.StatusOK {
-		fmt.Printf("Error downloading content status code %d\n", res.StatusCode)
-		os.Exit(1)
-	}
-
 	content, err := io.ReadAll(res.Body)
 	if err != nil {
 		fmt.Printf("Error reading response body %v\n", err)
+		os.Exit(1)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		fmt.Printf("Error downloading content status code %d: %s\n", res.StatusCode, content)
 		os.Exit(1)
 	}
 
