@@ -10,3 +10,6 @@ var FileInputDayTwo []byte
 
 //go:embed daythree.txt
 var FileInputDayThree []byte
+
+//go:embed dayfour.txt
+var FileInputDayFour []byte
