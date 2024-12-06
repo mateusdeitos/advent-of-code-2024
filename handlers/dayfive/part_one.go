@@ -76,7 +76,12 @@ func DayFivePartOneHandle(file []byte) int {
 	pageUpdates := strings.Split(lists[1], "\n")
 	sumOfMiddleValuesForCorrectUpdates := 0
 	for _, u := range pageUpdates {
-		values := strings.Split(u, ",")
+		strValues := strings.Split(u, ",")
+		values := make([]int, len(strValues))
+		for i, v := range strValues {
+			value, _ := strconv.Atoi(v)
+			values[i] = value
+		}
 		correct, err := isUpdateSequenceCorrect(*nodeMap, values)
 		if err != nil {
 			panic(err)
@@ -87,31 +92,29 @@ func DayFivePartOneHandle(file []byte) int {
 		}
 
 		i := int(len(values) / 2)
-		middle := values[i]
-		middleValue, _ := strconv.Atoi(middle)
+		middleValue := values[i]
 		sumOfMiddleValuesForCorrectUpdates += middleValue
 	}
 
 	return sumOfMiddleValuesForCorrectUpdates
 }
 
-func isUpdateSequenceCorrect(nodeMap NodeMap, values []string) (bool, error) {
+func isUpdateSequenceCorrect(nodeMap NodeMap, values []int) (bool, error) {
 	for i, value := range values {
-		valueInt, _ := strconv.Atoi(value)
-		node, ok := nodeMap[valueInt]
+		node, ok := nodeMap[value]
 		if !ok {
-			return false, fmt.Errorf("value not found in nodemap: %d, values %v", valueInt, values)
+			return false, fmt.Errorf("value not found in nodemap: %d, values %v", value, values)
 		}
 
 		for j := i - 1; j >= 0; j-- {
-			valueBefore, _ := strconv.Atoi(values[j])
+			valueBefore := values[j]
 			if !node.isAfterOf(valueBefore) {
 				return false, nil
 			}
 		}
 
 		for j := i + 1; j < len(values); j++ {
-			valueAfter, _ := strconv.Atoi(values[j])
+			valueAfter := values[j]
 			if !node.isBeforeOf(valueAfter) {
 				return false, nil
 			}
