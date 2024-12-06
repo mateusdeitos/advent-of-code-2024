@@ -1,7 +1,6 @@
 package dayfour
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -95,7 +94,6 @@ func searchDiagonally(grid []string) int {
 
 			// top to bottom
 			if w == word {
-				fmt.Printf("Found word at x: %d, y: %d, dirRow: %d, dirCol: %d\n", x, y, Positive, Positive)
 				total++
 				continue
 			}
@@ -103,7 +101,6 @@ func searchDiagonally(grid []string) int {
 			// bottom to top
 			rw := reverseString(w)
 			if rw == word {
-				fmt.Printf("Found word at x: %d, y: %d, dirRow: %d, dirCol: %d\n", x, y, Positive, Positive)
 				total++
 			}
 
@@ -118,7 +115,6 @@ func searchDiagonally(grid []string) int {
 
 			// top to bottom
 			if w == word {
-				fmt.Printf("Found word at x: %d, y: %d, dirRow: %d, dirCol: %d\n", x, y, Negative, Positive)
 				total++
 				continue
 			}
@@ -126,7 +122,6 @@ func searchDiagonally(grid []string) int {
 			// bottom to top
 			rw := reverseString(w)
 			if rw == word {
-				fmt.Printf("Found word at x: %d, y: %d, dirRow: %d, dirCol: %d\n", x, y, Negative, Positive)
 				total++
 			}
 		}
