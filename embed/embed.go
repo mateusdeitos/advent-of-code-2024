@@ -19,3 +19,9 @@ var FileInputDayFive []byte
 
 //go:embed dayfive_example.txt
 var FileInputDayFiveExample []byte
+
+//go:embed daysix.txt
+var FileInputDaySix []byte
+
+//go:embed daysix_example.txt
+var FileInputDaySixExample []byte
