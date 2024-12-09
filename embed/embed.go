@@ -31,3 +31,9 @@ var FileInputDaySeven []byte
 
 //go:embed dayseven_example.txt
 var FileInputDaySevenExample []byte
+
+//go:embed dayeight.txt
+var FileInputDayEight []byte
+
+//go:embed dayeight_example.txt
+var FileInputDayEightExample []byte
