@@ -63,6 +63,7 @@ func DaySevenPartOneHandle(file []byte) int64 {
 
 const sumOperator = "+"
 const multiplyOperator = "*"
+const concatenationOperator = "||"
 
 type Combination struct {
 	Nums       []int
@@ -89,6 +90,16 @@ func (c Combination) Eval() int64 {
 			acc += int64(c.Nums[i])
 		case multiplyOperator:
 			acc *= int64(c.Nums[i])
+		case concatenationOperator:
+			nStr := fmt.Sprint(c.Nums[i])
+			accStr := fmt.Sprint(acc)
+			concatenated := accStr + nStr
+			r, err := strconv.ParseInt(concatenated, 10, 64)
+			if err != nil {
+				panic(err)
+			}
+
+			acc = r
 		}
 	}
 
@@ -96,7 +107,7 @@ func (c Combination) Eval() int64 {
 }
 
 func generateCombinations(nums []int) []Combination {
-	operations := []string{sumOperator, multiplyOperator}
+	operations := []string{sumOperator, multiplyOperator, concatenationOperator}
 	var results []Combination
 	if len(nums) == 1 {
 		// Base case: only one number left
