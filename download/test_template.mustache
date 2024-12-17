@@ -1,0 +1,25 @@
+package {{package}}
+
+import (
+	"testing"
+
+	"github.com/mateusdeitos/advent-of-code-2024/embed"
+	"github.com/stretchr/testify/assert"
+)
+
+func Test{{dayUpperCamelCase}}PartOneHandler(t *testing.T) {
+
+	t.Run("test example input", func(t *testing.T) {
+		input := embed.FileInput{{dayUpperCamelCase}}Example
+
+		count := {{dayUpperCamelCase}}PartOneHandle(input)
+		assert.Equal(t, 1928, count)
+	})
+
+	t.Run("test real input", func(t *testing.T) {
+		input := embed.FileInput{{dayUpperCamelCase}}
+
+		count := {{dayUpperCamelCase}}PartOneHandle(input)
+		assert.Equal(t, 289, count)
+	})
+}

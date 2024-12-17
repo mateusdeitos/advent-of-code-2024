@@ -5,6 +5,9 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
+
+	"github.com/hoisie/mustache"
 )
 
 var dayToCursive = map[string]string{
@@ -92,6 +95,58 @@ func main() {
 	fmt.Printf("CWD: %s\n", dir)
 
 	err = os.WriteFile("./embed/"+cursive+".txt", content, 0644)
+	if err != nil {
+		fmt.Printf("Error writing file %v\n", err)
+		os.Exit(1)
+	}
+
+	dayCamelCase := strings.ToUpper(string(cursive[0])) + cursive[1:]
+	args := map[string]string{
+		"dayUpperCamelCase": dayCamelCase,
+		"package":           cursive,
+	}
+
+	path := "handlers/" + cursive
+	err = os.MkdirAll(path, 0755)
+	if err != nil {
+		fmt.Printf("Error creating directory %v\n", err)
+		os.Exit(1)
+	}
+
+	var output string
+	output = mustache.RenderFile("download/handler.mustache", args)
+	err = os.WriteFile(path+"/"+cursive+".go", []byte(output), 0644)
+	if err != nil {
+		fmt.Printf("Error writing file %v\n", err)
+		os.Exit(1)
+	}
+
+	output = mustache.RenderFile("download/test_template.mustache", args)
+	err = os.WriteFile(path+"/"+cursive+"_test.go", []byte(output), 0644)
+	if err != nil {
+		fmt.Printf("Error writing file %v\n", err)
+		os.Exit(1)
+	}
+
+	embedContent, err := os.ReadFile("embed/embed.go")
+	if err != nil {
+		fmt.Printf("Error reading file %v\n", err)
+		os.Exit(1)
+	}
+
+	embedContent = append(embedContent, []byte("\n")...)
+	embedContent = append(embedContent, []byte("// go:embed "+cursive+".txt\n")...)
+	embedContent = append(embedContent, []byte("var FileInput"+dayCamelCase+" []byte\n")...)
+	embedContent = append(embedContent, []byte("// go:embed "+cursive+"_example.txt\n")...)
+	embedContent = append(embedContent, []byte("var FileInput"+dayCamelCase+"Example []byte\n")...)
+
+	err = os.WriteFile("embed/embed.go", embedContent, 0644)
+	if err != nil {
+		fmt.Printf("Error writing file %v\n", err)
+		os.Exit(1)
+	}
+
+	err = os.WriteFile("embed/"+cursive+"_example.txt", []byte(""), 0644)
 	if err != nil {
 		fmt.Printf("Error writing file %v\n", err)
 		os.Exit(1)

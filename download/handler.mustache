@@ -1,0 +1,21 @@
+package {{package}}
+
+import (
+	"strconv"
+	"strings"
+)
+
+func {{dayUpperCamelCase}}PartOneHandle(file []byte) int {
+	chars := strings.Split(string(file), "")
+	blocks := make([]int, len(chars))
+	for i := range chars {
+		v, err := strconv.Atoi(chars[i])
+		if err != nil {
+			panic(err)
+		}
+
+		blocks[i] = v
+	}
+
+	return 0
+}
