@@ -49,3 +49,8 @@ var FileInputDayten []byte
 
 //go:embed dayten_example.txt
 var FileInputDaytenExample []byte
+
+//go:embed dayeleven.txt
+var FileInputDayeleven []byte
+//go:embed dayeleven_example.txt
+var FileInputDayelevenExample []byte
