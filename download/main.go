@@ -135,9 +135,9 @@ func main() {
 	}
 
 	embedContent = append(embedContent, []byte("\n")...)
-	embedContent = append(embedContent, []byte("// go:embed "+cursive+".txt\n")...)
+	embedContent = append(embedContent, []byte("//go:embed "+cursive+".txt\n")...)
 	embedContent = append(embedContent, []byte("var FileInput"+dayCamelCase+" []byte\n")...)
-	embedContent = append(embedContent, []byte("// go:embed "+cursive+"_example.txt\n")...)
+	embedContent = append(embedContent, []byte("//go:embed "+cursive+"_example.txt\n")...)
 	embedContent = append(embedContent, []byte("var FileInput"+dayCamelCase+"Example []byte\n")...)
 
 	err = os.WriteFile("embed/embed.go", embedContent, 0644)

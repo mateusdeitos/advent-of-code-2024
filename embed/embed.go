@@ -43,3 +43,9 @@ var FileInputDayNine []byte
 
 //go:embed daynine_example.txt
 var FileInputDayNineExample []byte
+
+//go:embed dayten.txt
+var FileInputDayten []byte
+
+//go:embed dayten_example.txt
+var FileInputDaytenExample []byte
