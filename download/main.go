@@ -44,19 +44,20 @@ var dayToCursive = map[string]string{
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		panic("Usage: download <day>")
+	if len(os.Args) < 3 {
+		panic("Usage: download <year> <day>")
 	}
 
-	day := os.Args[1]
+	year := os.Args[1]
+	day := os.Args[2]
 
 	cursive, ok := dayToCursive[day]
 	if !ok {
 		panic("Invalid day")
 	}
 
-	fmt.Printf("Downloading input for day %s\n", day)
-	r, _ := http.NewRequest("GET", "https://adventofcode.com/2024/day/"+day+"/input", nil)
+	fmt.Printf("Downloading input for day %s in year %s\n", day, year)
+	r, _ := http.NewRequest("GET", "https://adventofcode.com/"+year+"/day/"+day+"/input", nil)
 
 	session := os.Getenv("SESSION")
 	if session == "" {
@@ -94,7 +95,14 @@ func main() {
 
 	fmt.Printf("CWD: %s\n", dir)
 
-	err = os.WriteFile("./embed/"+cursive+".txt", content, 0644)
+	// create year directory if it doesn't exist
+	err = os.MkdirAll("./embed/"+year, 0755)
+	if err != nil {
+		fmt.Printf("Error creating directory %v\n", err)
+		os.Exit(1)
+	}
+
+	err = os.WriteFile("./embed/"+year+"/"+cursive+".txt", content, 0644)
 	if err != nil {
 		fmt.Printf("Error writing file %v\n", err)
 		os.Exit(1)
@@ -104,9 +112,10 @@ func main() {
 	args := map[string]string{
 		"dayUpperCamelCase": dayCamelCase,
 		"package":           cursive,
+		"year":              year,
 	}
 
-	path := "handlers/" + cursive
+	path := "handlers/" + year + "/" + cursive
 	err = os.MkdirAll(path, 0755)
 	if err != nil {
 		fmt.Printf("Error creating directory %v\n", err)
@@ -128,7 +137,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	embedContent, err := os.ReadFile("embed/embed.go")
+	if _, err := os.Stat("embed/" + year + "/embed.go"); os.IsNotExist(err) {
+		err = os.WriteFile("embed/"+year+"/embed.go", []byte("package embed\n\nimport _ \"embed\"\n"), 0644)
+		if err != nil {
+			fmt.Printf("Error writing file %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	embedContent, err := os.ReadFile("embed/" + year + "/embed.go")
 	if err != nil {
 		fmt.Printf("Error reading file %v\n", err)
 		os.Exit(1)
@@ -140,13 +157,13 @@ func main() {
 	embedContent = append(embedContent, []byte("//go:embed "+cursive+"_example.txt\n")...)
 	embedContent = append(embedContent, []byte("var FileInput"+dayCamelCase+"Example []byte\n")...)
 
-	err = os.WriteFile("embed/embed.go", embedContent, 0644)
+	err = os.WriteFile("embed/"+year+"/embed.go", embedContent, 0644)
 	if err != nil {
 		fmt.Printf("Error writing file %v\n", err)
 		os.Exit(1)
 	}
 
-	err = os.WriteFile("embed/"+cursive+"_example.txt", []byte(""), 0644)
+	err = os.WriteFile("embed/"+year+"/"+cursive+"_example.txt", []byte(""), 0644)
 	if err != nil {
 		fmt.Printf("Error writing file %v\n", err)
 		os.Exit(1)
