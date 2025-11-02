@@ -20,6 +20,31 @@ func TestDayonePartOneHandler(t *testing.T) {
 		input := embed.FileInputDayone
 
 		count := DayonePartOneHandle(input)
-		assert.Equal(t, 289, count)
+		assert.Equal(t, 56465, count)
 	})
+}
+
+func TestDayonePartTwoHandler(t *testing.T) {
+
+	t.Run("test example input", func(t *testing.T) {
+		input := []byte(`sevenine
+	two1nine
+	eightwothree
+	abcone2threexyz
+	xtwone3four
+	4nineeightseven2
+	zoneight234
+	7pqrstsixteen`)
+
+		count := DayonePartTwoHandle(input)
+		assert.Equal(t, 360, count)
+	})
+
+	t.Run("text real input", func(t *testing.T) {
+		input := embed.FileInputDayone
+
+		count := DayonePartTwoHandle(input)
+		assert.Equal(t, 5529, count)
+	})
+
 }
