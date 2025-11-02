@@ -1,4 +1,4 @@
-package daytwo
+package partone
 
 import (
 	"fmt"
