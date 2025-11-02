@@ -6,3 +6,8 @@ import _ "embed"
 var FileInputDayone []byte
 //go:embed dayone_example.txt
 var FileInputDayoneExample []byte
+
+//go:embed daytwo.txt
+var FileInputDaytwo []byte
+//go:embed daytwo_example.txt
+var FileInputDaytwoExample []byte
