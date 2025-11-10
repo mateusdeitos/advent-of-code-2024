@@ -11,3 +11,8 @@ var FileInputDayoneExample []byte
 var FileInputDaytwo []byte
 //go:embed daytwo_example.txt
 var FileInputDaytwoExample []byte
+
+//go:embed daythree.txt
+var FileInputDaythree []byte
+//go:embed daythree_example.txt
+var FileInputDaythreeExample []byte
